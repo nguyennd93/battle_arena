@@ -28,17 +28,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] AudioClip _sfxTapButton;
 
     [Header("Gameplay - SFXs")]
-    [SerializeField] AudioClip _sfxActiveBooster;
-    [SerializeField] AudioClip _sfxSelectBlock;
-    [SerializeField] AudioClip _sfxMergeBlocks;
-    [SerializeField] AudioClip _sfxEleminateBlock;
-    [SerializeField] AudioClip _sfxCombo;
-    [SerializeField] AudioClip _sfxNewHighest;
-    [SerializeField] AudioClip _sfxAddGem;
-    [SerializeField] AudioClip _sfxConsumeGem;
-    [SerializeField] AudioClip _sfxNoMoreMoves;
-    [SerializeField] AudioClip _sfxHighscore;
-    [SerializeField] AudioClip _sfxCompleteHighscore;
+    [SerializeField] AudioClip _sfxWeapons;
 
     [Header("BGMs")]
     [SerializeField] AudioClip _bgmHome;
@@ -320,104 +310,14 @@ public class SoundManager : MonoBehaviour
     /// GAMEPLAY
     /// </summary>
 
-    public void PlaySfxActiveBooster()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxActiveBooster,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxSelectBlock()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxSelectBlock,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxMergeBlocks()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxMergeBlocks,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxEleminateBlock()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxEleminateBlock,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxCombo()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxCombo,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxNewHighest()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxNewHighest,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxAddGems()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxAddGem,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxConsumeGems()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxConsumeGem,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxNoMoreMoves()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxNoMoreMoves,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxHighscore()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxHighscore,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
-
-    public void PlaySfxCompleteWithHighscore()
-    {
-        playSound(new AudioConfig()
-        {
-            Clip = _sfxCompleteHighscore,
-            Type = AudioConfig.AudioType.SFX
-        });
-    }
+    // public void PlaySfxActiveBooster()
+    // {
+    //     playSound(new AudioConfig()
+    //     {
+    //         Clip = _sfxActiveBooster,
+    //         Type = AudioConfig.AudioType.SFX
+    //     });
+    // }
 
     /// <summary>
     /// BGM

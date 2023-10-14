@@ -1,0 +1,6 @@
+[General]
+ios_app_id = com.game.matchtriple3d
+ios_bundle_id = com.game.matchtriple3d
+android_package_name = com.game.matchtriple3d
+enable_fps_counter = true
+fps_update_interval = 0.5

@@ -4,19 +4,16 @@ using UnityEngine;
 using Cinemachine;
 using Unity.Entities;
 
-namespace Gameplay
+public class GameCameraAuthoring : MonoBehaviour
 {
-    public class GameCameraAuthoring : MonoBehaviour
-    {
-        public GameObject Follower;
+    public GameObject Follower;
 
-        public class Baker : Baker<GameCameraAuthoring>
+    public class Baker : Baker<GameCameraAuthoring>
+    {
+        public override void Bake(GameCameraAuthoring authoring)
         {
-            public override void Bake(GameCameraAuthoring authoring)
-            {
-                Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-                AddComponent(entity, new CinematicCameraControl() { FollowedEntity = GetEntity(authoring.Follower, TransformUsageFlags.None) });
-            }
+            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            AddComponent(entity, new CinematicCameraControl() { FollowedEntity = GetEntity(authoring.Follower, TransformUsageFlags.None) });
         }
     }
 }

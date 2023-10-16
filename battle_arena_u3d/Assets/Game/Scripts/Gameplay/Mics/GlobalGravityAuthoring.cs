@@ -4,19 +4,16 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Gameplay
+public class GlobalGravityAuthoring : MonoBehaviour
 {
-    public class GlobalGravityAuthoring : MonoBehaviour
-    {
-        public float3 Gravity;
+    public float3 Gravity;
 
-        class Baker : Baker<GlobalGravityAuthoring>
+    class Baker : Baker<GlobalGravityAuthoring>
+    {
+        public override void Bake(GlobalGravityAuthoring authoring)
         {
-            public override void Bake(GlobalGravityAuthoring authoring)
-            {
-                Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-                AddComponent(entity, new GlobalGravityData { Gravity = authoring.Gravity });
-            }
+            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            AddComponent(entity, new GlobalGravityData { Gravity = authoring.Gravity });
         }
     }
 }

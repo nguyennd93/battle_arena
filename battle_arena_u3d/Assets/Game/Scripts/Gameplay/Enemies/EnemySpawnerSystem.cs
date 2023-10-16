@@ -8,102 +8,99 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace Gameplay
+[BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+public partial struct EnemySpawnerSystem : ISystem
 {
+    private BufferLookup<GpuEcsAnimationDataBufferElement> gpuEcsAnimationDataBufferLookup;
+    private ComponentLookup<LocalTransform> localTransformLookup;
+
     [BurstCompile]
-    [UpdateInGroup(typeof(SimulationSystemGroup))]
-    public partial struct EnemySpawnerSystem : ISystem
+    public void OnCreate(ref SystemState state)
     {
-        private BufferLookup<GpuEcsAnimationDataBufferElement> gpuEcsAnimationDataBufferLookup;
-        private ComponentLookup<LocalTransform> localTransformLookup;
+        gpuEcsAnimationDataBufferLookup = state.GetBufferLookup<GpuEcsAnimationDataBufferElement>(isReadOnly: true);
+        localTransformLookup = state.GetComponentLookup<LocalTransform>(isReadOnly: true);
+    }
 
-        [BurstCompile]
-        public void OnCreate(ref SystemState state)
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
+    {
+        gpuEcsAnimationDataBufferLookup.Update(ref state);
+        localTransformLookup.Update(ref state);
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
+        float deltaTime = SystemAPI.Time.DeltaTime;
+
+        state.Dependency = new EnemySpawnerJob()
         {
-            gpuEcsAnimationDataBufferLookup = state.GetBufferLookup<GpuEcsAnimationDataBufferElement>(isReadOnly: true);
-            localTransformLookup = state.GetComponentLookup<LocalTransform>(isReadOnly: true);
-        }
+            ecb = ecb,
+            deltaTime = deltaTime,
+            gpuEcsAnimationDataBufferLookup = gpuEcsAnimationDataBufferLookup,
+            localTransformLookup = localTransformLookup
+        }.ScheduleParallel(state.Dependency);
+    }
 
-        [BurstCompile]
-        public void OnUpdate(ref SystemState state)
+    [BurstCompile]
+    private partial struct EnemySpawnerJob : IJobEntity
+    {
+        public EntityCommandBuffer.ParallelWriter ecb;
+        [ReadOnly] public float deltaTime;
+        [ReadOnly] public BufferLookup<GpuEcsAnimationDataBufferElement> gpuEcsAnimationDataBufferLookup;
+        [ReadOnly] public ComponentLookup<LocalTransform> localTransformLookup;
+
+        public void Execute(ref EnemySpawnerData spawnData, in DynamicBuffer<EnemyPrefabBufferElement> enemyPrefabs, [ChunkIndexInQuery] int sortKey)
         {
-            gpuEcsAnimationDataBufferLookup.Update(ref state);
-            localTransformLookup.Update(ref state);
-            EndSimulationEntityCommandBufferSystem.Singleton ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-            EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
-            float deltaTime = SystemAPI.Time.DeltaTime;
-
-            state.Dependency = new EnemySpawnerJob()
+            spawnData.CurrentTime += deltaTime;
+            while (spawnData.CurrentTime > spawnData.Interval)
             {
-                ecb = ecb,
-                deltaTime = deltaTime,
-                gpuEcsAnimationDataBufferLookup = gpuEcsAnimationDataBufferLookup,
-                localTransformLookup = localTransformLookup
-            }.ScheduleParallel(state.Dependency);
-        }
+                spawnData.CurrentTime = 0f;
 
-        [BurstCompile]
-        private partial struct EnemySpawnerJob : IJobEntity
-        {
-            public EntityCommandBuffer.ParallelWriter ecb;
-            [ReadOnly] public float deltaTime;
-            [ReadOnly] public BufferLookup<GpuEcsAnimationDataBufferElement> gpuEcsAnimationDataBufferLookup;
-            [ReadOnly] public ComponentLookup<LocalTransform> localTransformLookup;
-
-            public void Execute(ref EnemySpawnerData spawnData, in DynamicBuffer<EnemyPrefabBufferElement> enemyPrefabs, [ChunkIndexInQuery] int sortKey)
-            {
-                spawnData.CurrentTime += deltaTime;
-                while (spawnData.CurrentTime > spawnData.Interval)
+                for (int i = 0; i < spawnData.EnemyPerTurn; i++)
                 {
-                    spawnData.CurrentTime = 0f;
-
-                    for (int i = 0; i < spawnData.EnemyPerTurn; i++)
-                    {
-                        float r = spawnData.Random.NextFloat(spawnData.MinRadius, spawnData.MaxRadius);
-                        Vector3 randomPos = Quaternion.Euler(0, spawnData.Random.NextFloat(0f, 360f), 0) * Vector3.forward * r;
-                        CreateEnemy(ref spawnData, sortKey, randomPos, enemyPrefabs);
-                    }
+                    float r = spawnData.Random.NextFloat(spawnData.MinRadius, spawnData.MaxRadius);
+                    Vector3 randomPos = Quaternion.Euler(0, spawnData.Random.NextFloat(0f, 360f), 0) * Vector3.forward * r;
+                    CreateEnemy(ref spawnData, sortKey, randomPos, enemyPrefabs);
                 }
             }
+        }
 
-            private Entity CreateEnemy(ref EnemySpawnerData spawnData, int sortKey, float3 baseOffset, in DynamicBuffer<EnemyPrefabBufferElement> enemyPrefabs)
+        private Entity CreateEnemy(ref EnemySpawnerData spawnData, int sortKey, float3 baseOffset, in DynamicBuffer<EnemyPrefabBufferElement> enemyPrefabs)
+        {
+            var prefab = enemyPrefabs[spawnData.Random.NextInt(0, enemyPrefabs.Length)];
+
+            Entity newEnemy = ecb.Instantiate(sortKey, prefab.PrefabEntity);
+
+            // Transform Component
+            ecb.SetComponent(sortKey, newEnemy, new LocalTransform()
             {
-                var prefab = enemyPrefabs[spawnData.Random.NextInt(0, enemyPrefabs.Length)];
+                Position = baseOffset,
+                Rotation = quaternion.Euler(0, spawnData.Random.NextFloat(-math.PI, math.PI), 0),
+                Scale = localTransformLookup[prefab.PrefabEntity].Scale
+            });
 
-                Entity newEnemy = ecb.Instantiate(sortKey, prefab.PrefabEntity);
-
-                // Transform Component
-                ecb.SetComponent(sortKey, newEnemy, new LocalTransform()
+            // Animation Component
+            ecb.SetComponent(sortKey, newEnemy, new GpuEcsAnimatorControlComponent()
+            {
+                animatorInfo = new AnimatorInfo()
                 {
-                    Position = baseOffset,
-                    Rotation = quaternion.Euler(0, spawnData.Random.NextFloat(-math.PI, math.PI), 0),
-                    Scale = localTransformLookup[prefab.PrefabEntity].Scale
-                });
+                    animationID = 0,
+                    blendFactor = 0,
+                    speedFactor = 1f
+                },
+                startNormalizedTime = 0f,
+                transitionSpeed = 0
+            });
 
-                // Animation Component
-                ecb.SetComponent(sortKey, newEnemy, new GpuEcsAnimatorControlComponent()
-                {
-                    animatorInfo = new AnimatorInfo()
-                    {
-                        animationID = 0,
-                        blendFactor = 0,
-                        speedFactor = 1f
-                    },
-                    startNormalizedTime = 0f,
-                    transitionSpeed = 0
-                });
-
-                // Enemy Data Component
-                bool isRange = prefab.Type == EnemyType.Range;
-                ecb.AddComponent(sortKey, newEnemy, new EnemyData()
-                {
-                    Type = prefab.Type,
-                    Speed = isRange ? 2f : 3f,
-                    Coin = isRange ? 100 : 200,
-                    Damage = isRange ? 50 : 100
-                });
-                return newEnemy;
-            }
+            // Enemy Data Component
+            bool isRange = prefab.Type == EnemyType.Range;
+            ecb.AddComponent(sortKey, newEnemy, new EnemyData()
+            {
+                Type = prefab.Type,
+                Speed = isRange ? 0.2f : 0.1f,
+                Coin = isRange ? 100 : 200,
+                Damage = isRange ? 50 : 100
+            });
+            return newEnemy;
         }
     }
 }

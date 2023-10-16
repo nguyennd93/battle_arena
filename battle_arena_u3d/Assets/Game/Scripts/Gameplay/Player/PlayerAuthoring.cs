@@ -7,21 +7,21 @@ namespace Gameplay
 {
     public class PlayerAuthoring : MonoBehaviour
     {
-        [SerializeField] float _speed;
+        public GameObject Character;
+        public GameObject Camera;
 
-        public float Speed { get { return _speed; } }
-    }
-
-    public class PlayerAuthoringBaker : Baker<PlayerAuthoring>
-    {
-        public override void Bake(PlayerAuthoring authoring)
+        public class Baker : Baker<PlayerAuthoring>
         {
-            var playerEntity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent<Speed>(playerEntity, new Speed() {
-                Value = authoring.Speed
-            });
-            AddComponent<MoveInput>(playerEntity);
-            AddComponent<PlayerTag>(playerEntity);
+            public override void Bake(PlayerAuthoring authoring)
+            {
+                Entity entity = GetEntity(TransformUsageFlags.None);
+                AddComponent(entity, new MainPlayer
+                {
+                    Character = GetEntity(authoring.Character, TransformUsageFlags.Dynamic),
+                    Camera = GetEntity(authoring.Camera, TransformUsageFlags.Dynamic),
+                });
+                AddComponent(entity, new PlayerInputs());
+            }
         }
     }
 }

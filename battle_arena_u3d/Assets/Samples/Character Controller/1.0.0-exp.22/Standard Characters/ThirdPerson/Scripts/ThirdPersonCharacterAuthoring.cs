@@ -19,8 +19,9 @@ public class ThirdPersonCharacterAuthoring : MonoBehaviour
             KinematicCharacterUtilities.BakeCharacter(this, authoring, authoring.CharacterProperties);
 
             Entity entity = GetEntity(TransformUsageFlags.Dynamic | TransformUsageFlags.WorldSpace);
-
             AddComponent(entity, authoring.Character);
+            AddComponent(entity, new CharacterStateMachine());
+            AddComponent(entity, new ForceChangeState() { Force = false, State = StateType.Move });
             AddComponent(entity, new ThirdPersonCharacterControl());
         }
     }

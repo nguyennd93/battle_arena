@@ -1,56 +1,54 @@
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
+using Unity.CharacterController;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
+using UnityEngine;
 
-public partial class AIControllerSystem : SystemBase
+[BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+public partial struct AIControllerSystem : ISystem
 {
-    protected override void OnUpdate()
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
     {
-        PhysicsWorld physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
-        NativeList<DistanceHit> distanceHits = new NativeList<DistanceHit>(Allocator.TempJob);
-
-        foreach (var (characterControl, aiController, localTransform) in SystemAPI.Query<RefRW<ThirdPersonCharacterControl>, AIController, LocalTransform>())
+        var position = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetSingletonEntity<PlayerTag>()).Position;
+        new QueryJob()
         {
-            // Clear our detected hits list between each use
-            distanceHits.Clear();
+            TargetPosition = position,
+            DeltaTime = SystemAPI.Time.DeltaTime
+        }.ScheduleParallel();
+    }
 
-            // Create a hit collector for the detection hits
-            AllHitsCollector<DistanceHit> hitsCollector = new AllHitsCollector<DistanceHit>(aiController.DetectionDistance, ref distanceHits);
+    [BurstCompile]
+    partial struct QueryJob : IJobEntity
+    {
+        public float3 TargetPosition;
+        public float DeltaTime;
 
-            // Detect hits that are within the detection range of the AI character
-            PointDistanceInput distInput = new PointDistanceInput
+        public void Execute(ref ThirdPersonCharacterControl characterControl, ref ForceChangeState aiAction, ref CharacterState aiState, ref CharacterStateMachine machine, ref AIController aiController, ref LocalTransform localTransform)
+        {
+            aiState.IntervalAttack -= DeltaTime;
+            var distance = math.distance(TargetPosition, localTransform.Position);
+            if (distance <= aiController.DistanceCanAttack)
             {
-                Position = localTransform.Position,
-                MaxDistance = aiController.DetectionDistance,
-                Filter = new CollisionFilter { BelongsTo = CollisionFilter.Default.BelongsTo, CollidesWith = aiController.DetectionFilter.Value },
-            };
-            physicsWorld.CalculateDistance(distInput, ref hitsCollector);
-
-            // Iterate on all detected hits to try to find a human-controlled character...
-            Entity selectedTarget = Entity.Null;
-            for (int i = 0; i < hitsCollector.NumHits; i++)
-            {
-                Entity hitEntity = distanceHits[i].Entity;
-
-                // If it has a character component but no AIController component, that means it's a human player character
-                if (SystemAPI.HasComponent<ThirdPersonCharacterComponent>(hitEntity) && !SystemAPI.HasComponent<AIController>(hitEntity))
+                if (aiState.IntervalAttack <= 0f)
                 {
-                    selectedTarget = hitEntity;
-                    break; // early out
+                    characterControl.MoveVector = float3.zero;
+                    aiAction.Force = true;
+                    aiAction.State = StateType.Attack;
                 }
-            }
-
-            // In the character control component, set a movement vector that will make the ai character move towards the selected target
-            if (selectedTarget != Entity.Null)
-            {
-                characterControl.ValueRW.MoveVector = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(selectedTarget).Position - localTransform.Position);
+                else
+                {
+                    characterControl.MoveVector = float3.zero;
+                }
+                localTransform.Rotation = quaternion.LookRotationSafe(math.normalize(TargetPosition - localTransform.Position), math.up());
             }
             else
-            {
-                characterControl.ValueRW.MoveVector = float3.zero;
-            }
+                characterControl.MoveVector = math.normalizesafe(TargetPosition - localTransform.Position);
         }
     }
 }

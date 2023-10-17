@@ -14,7 +14,7 @@ public readonly partial struct EnemyAspect : IAspect
     public readonly RefRW<LocalToWorld> Position;
     public readonly RefRW<PhysicsVelocity> Velocity;
     public readonly RefRW<PhysicsMass> Mass;
-    public readonly RefRW<EnemyData> EnemyData;
+    public readonly RefRW<CharacterData> EnemyData;
     public readonly RefRW<GpuEcsAnimatorControlComponent> Animation;
 
     public void ForceMove()

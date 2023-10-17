@@ -90,16 +90,6 @@ public partial struct EnemySpawnerSystem : ISystem
                 startNormalizedTime = 0f,
                 transitionSpeed = 0
             });
-
-            // Enemy Data Component
-            bool isRange = prefab.Type == EnemyType.Range;
-            ecb.AddComponent(sortKey, newEnemy, new EnemyData()
-            {
-                Type = prefab.Type,
-                Speed = isRange ? 0.2f : 0.1f,
-                Coin = isRange ? 100 : 200,
-                Damage = isRange ? 50 : 100
-            });
             return newEnemy;
         }
     }

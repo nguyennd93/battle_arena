@@ -38,7 +38,6 @@ public partial class ThirdPersonPlayerInputsSystem : SystemBase
         foreach (var (playerInputs, player) in SystemAPI.Query<RefRW<ThirdPersonPlayerInputs>, ThirdPersonPlayer>())
         {
             playerInputs.ValueRW.MoveInput = Vector2.ClampMagnitude(_controlActions.Controller.Movement.ReadValue<Vector2>(), 1f);
-
             playerInputs.ValueRW.CameraLookInput = new float2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
             playerInputs.ValueRW.CameraZoomInput = 1f;
 
@@ -46,7 +45,7 @@ public partial class ThirdPersonPlayerInputsSystem : SystemBase
             // This is part of a strategy for proper handling of button press events that are consumed during the fixed update group
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                playerInputs.ValueRW.JumpPressed.Set(fixedTick);
+                playerInputs.ValueRW.AttackPressed.Set(fixedTick);
             }
         }
     }
@@ -113,9 +112,10 @@ public partial struct ThirdPersonPlayerFixedStepControlSystem : ISystem
 
         foreach (var (playerInputs, player) in SystemAPI.Query<RefRW<ThirdPersonPlayerInputs>, ThirdPersonPlayer>().WithAll<Simulate>())
         {
-            if (SystemAPI.HasComponent<ThirdPersonCharacterControl>(player.ControlledCharacter))
+            if (SystemAPI.HasComponent<ThirdPersonCharacterControl>(player.ControlledCharacter) && SystemAPI.HasComponent<CharacterStateMachine>(player.ControlledCharacter))
             {
                 ThirdPersonCharacterControl characterControl = SystemAPI.GetComponent<ThirdPersonCharacterControl>(player.ControlledCharacter);
+                CharacterStateMachine stateMachine = SystemAPI.GetComponent<CharacterStateMachine>(player.ControlledCharacter);
 
                 float3 characterUp = MathUtilities.GetUpFromRotation(SystemAPI.GetComponent<LocalTransform>(player.ControlledCharacter).Rotation);
 
@@ -125,17 +125,10 @@ public partial struct ThirdPersonPlayerFixedStepControlSystem : ISystem
                 {
                     cameraRotation = SystemAPI.GetComponent<LocalTransform>(player.ControlledCamera).Rotation;
                 }
-                float3 cameraForwardOnUpPlane = math.normalizesafe(MathUtilities.ProjectOnPlane(MathUtilities.GetForwardFromRotation(cameraRotation), characterUp));
-                float3 cameraRight = MathUtilities.GetRightFromRotation(cameraRotation);
 
-                // Move
-                characterControl.MoveVector = (playerInputs.ValueRW.MoveInput.y * cameraForwardOnUpPlane) + (playerInputs.ValueRW.MoveInput.x * cameraRight);
-                characterControl.MoveVector = MathUtilities.ClampToMaxLength(characterControl.MoveVector, 1f);
+                stateMachine.GetMoveVectorFromPlayerInput(stateMachine.CurrentState, in playerInputs.ValueRO, cameraRotation, out characterControl.MoveVector);
 
-                // Jump
-                // We use the "FixedInputEvent" helper struct here to detect if the event needs to be processed.
-                // This is part of a strategy for proper handling of button press events that are consumed during the fixed update group.
-                characterControl.Jump = playerInputs.ValueRW.JumpPressed.IsSet(fixedTick);
+                characterControl.Attack = playerInputs.ValueRW.AttackPressed.IsSet(fixedTick);
 
                 SystemAPI.SetComponent(player.ControlledCharacter, characterControl);
             }

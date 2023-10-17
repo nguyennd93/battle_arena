@@ -13,6 +13,9 @@ GameObject:
   - component: {fileID: 5575222797604832098}
   - component: {fileID: 7057200415375311767}
   - component: {fileID: 5432948487392261702}
+  - component: {fileID: 6722224507211742088}
+  - component: {fileID: 5634194948525926956}
+  - component: {fileID: 5854796759747423568}
   m_Layer: 0
   m_Name: OriginWerewolf_GpuEcsAnimator
   m_TagString: Untagged
@@ -100,22 +103,22 @@ MonoBehaviour:
     y: 1
     z: 0.1
   m_PrimitiveSize:
-    x: 1.2
+    x: 1.5
     y: 2
-    z: 0.8
+    z: 1.5
   m_PrimitiveOrientation:
     Value:
       x: -0
-      y: 0
+      y: 45
       z: 0
     RotationOrder: 4
   m_Capsule:
     Height: 2
-    Radius: 0.6
+    Radius: 0.75
     Axis: 1
   m_Cylinder:
     Height: 2
-    Radius: 0.6
+    Radius: 0.75
     Axis: 1
   m_CylinderSideCount: 20
   m_SphereRadius: 1
@@ -238,40 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIController:
-    DetectionDistance: 10
-    DetectionFilter:
-      Category00: 1
-      Category01: 1
-      Category02: 1
-      Category03: 1
-      Category04: 1
-      Category05: 1
-      Category06: 1
-      Category07: 1
-      Category08: 1
-      Category09: 1
-      Category10: 1
-      Category11: 1
-      Category12: 1
-      Category13: 1
-      Category14: 1
-      Category15: 1
-      Category16: 1
-      Category17: 1
-      Category18: 1
-      Category19: 1
-      Category20: 1
-      Category21: 1
-      Category22: 1
-      Category23: 1
-      Category24: 1
-      Category25: 1
-      Category26: 1
-      Category27: 1
-      Category28: 1
-      Category29: 1
-      Category30: 1
-      Category31: 1
+    DistanceCanAttack: 2
 --- !u!114 &5432948487392261702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,15 +283,15 @@ MonoBehaviour:
     Mass: 1
   Character:
     RotationSharpness: 25
-    GroundMaxSpeed: 5
-    GroundedMovementSharpness: 5
+    GroundMaxSpeed: 3
+    GroundedMovementSharpness: 2
     AirAcceleration: 50
     AirMaxSpeed: 10
     AirDrag: 0
     JumpSpeed: 10
     Gravity:
       x: -0
-      y: -30
+      y: -9
       z: -0
     PreventAirAccelerationAgainstUngroundedHits: 1
     StepAndSlopeHandling:
@@ -333,6 +303,51 @@ MonoBehaviour:
       HasMaxDownwardSlopeChangeAngle: 0
       MaxDownwardSlopeChangeAngle: 90
       ConstrainVelocityToGroundPlane: 1
+--- !u!114 &6722224507211742088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4461775674249964447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7809751080c184b96bf2c2716ecbedd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Data:
+    Type: 1
+    HP: 50
+    Speed: 3
+    Damage: 10
+    Coin: 100
+  AttackRate: 5
+--- !u!114 &5634194948525926956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4461775674249964447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1bf16125023b488ab327f46a74311a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5854796759747423568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4461775674249964447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb5b5f571d06a4086b4b5193cfe296d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Prefab: {fileID: 8797447228037929493, guid: ef62bc89b4c734618827d1d51ef85ea8, type: 3}
+  Speed: 0
 --- !u!1 &8166547800937295809
 GameObject:
   m_ObjectHideFlags: 0

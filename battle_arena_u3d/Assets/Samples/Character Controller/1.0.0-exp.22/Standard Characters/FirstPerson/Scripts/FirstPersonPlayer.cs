@@ -15,5 +15,5 @@ public struct FirstPersonPlayerInputs : IComponentData
 {
     public float2 MoveInput;
     public float2 LookInput;
-    public FixedInputEvent JumpPressed;
+    public FixedInputEvent AttackPressed;
 }

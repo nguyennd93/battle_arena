@@ -9,7 +9,8 @@ public class AIControllerAuthoring : MonoBehaviour
     {
         public override void Bake(AIControllerAuthoring authoring)
         {
-            AddComponent(authoring.AIController);
+            Entity entity = GetEntity(TransformUsageFlags.None);
+            AddComponent(entity, authoring.AIController);
         }
     }
 }

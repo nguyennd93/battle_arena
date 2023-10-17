@@ -36,7 +36,7 @@ public partial class FirstPersonPlayerInputsSystem : SystemBase
             // This is part of a strategy for proper handling of button press events that are consumed during the fixed update group
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                playerInputs.ValueRW.JumpPressed.Set(fixedTick);
+                playerInputs.ValueRW.AttackPressed.Set(fixedTick);
             }
         }
     }
@@ -117,7 +117,7 @@ public partial struct FirstPersonPlayerFixedStepControlSystem : ISystem
                 // Jump
                 // We use the "FixedInputEvent" helper struct here to detect if the event needs to be processed.
                 // This is part of a strategy for proper handling of button press events that are consumed during the fixed update group.
-                characterControl.Jump = playerInputs.ValueRW.JumpPressed.IsSet(fixedTick);
+                characterControl.Jump = playerInputs.ValueRW.AttackPressed.IsSet(fixedTick);
             
                 SystemAPI.SetComponent(player.ControlledCharacter, characterControl);
             }

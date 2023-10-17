@@ -5,6 +5,7 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
     {
         private readonly RefRW<GpuEcsAnimatorControlComponent> control;
         private readonly RefRW<GpuEcsAnimatorControlStateComponent> controlState;
+        private readonly RefRW<GpuEcsAnimatorStateComponent> state;
 
         public void RunAnimation(int animationID,
             float blendFactor = 0f, float speedFactor = 1f, float startNormalizedTime = 0f, float transitionSpeed = 0f)
@@ -25,17 +26,23 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
 
         public void StartAnimation()
         {
-            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent() {
+            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent()
+            {
                 state = GpuEcsAnimatorControlStates.Start
             };
         }
-        
+
         public void StopAnimation()
         {
-            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent() {
+            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent()
+            {
                 state = GpuEcsAnimatorControlStates.Stop
             };
         }
-        
+
+        public bool IsStop()
+        {
+            return state.ValueRO.stopped;
+        }
     }
 }

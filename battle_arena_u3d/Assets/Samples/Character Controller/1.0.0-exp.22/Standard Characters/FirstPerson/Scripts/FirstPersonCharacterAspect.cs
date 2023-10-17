@@ -41,12 +41,12 @@ public readonly partial struct FirstPersonCharacterAspect : IAspect, IKinematicC
         ref FirstPersonCharacterComponent characterComponent = ref CharacterComponent.ValueRW;
         ref KinematicCharacterBody characterBody = ref CharacterAspect.CharacterBody.ValueRW;
         ref float3 characterPosition = ref CharacterAspect.LocalTransform.ValueRW.Position;
-        
+
         // First phase of default character update
         CharacterAspect.Update_Initialize(in this, ref context, ref baseContext, ref characterBody, baseContext.Time.DeltaTime);
         CharacterAspect.Update_ParentMovement(in this, ref context, ref baseContext, ref characterBody, ref characterPosition, characterBody.WasGroundedBeforeCharacterUpdate);
         CharacterAspect.Update_Grounding(in this, ref context, ref baseContext, ref characterBody, ref characterPosition);
-        
+
         // Update desired character velocity after grounding was detected, but before doing additional processing that depends on velocity
         HandleVelocityControl(ref context, ref baseContext);
 
@@ -54,7 +54,7 @@ public readonly partial struct FirstPersonCharacterAspect : IAspect, IKinematicC
         CharacterAspect.Update_PreventGroundingFromFutureSlopeChange(in this, ref context, ref baseContext, ref characterBody, in characterComponent.StepAndSlopeHandling);
         CharacterAspect.Update_GroundPushing(in this, ref context, ref baseContext, characterComponent.Gravity);
         CharacterAspect.Update_MovementAndDecollisions(in this, ref context, ref baseContext, ref characterBody, ref characterPosition);
-        CharacterAspect.Update_MovingPlatformDetection(ref baseContext, ref characterBody); 
+        CharacterAspect.Update_MovingPlatformDetection(ref baseContext, ref characterBody);
         CharacterAspect.Update_ParentMomentum(ref baseContext, ref characterBody);
         CharacterAspect.Update_ProcessStatefulCharacterHits();
     }
@@ -67,12 +67,12 @@ public readonly partial struct FirstPersonCharacterAspect : IAspect, IKinematicC
         ref FirstPersonCharacterControl characterControl = ref CharacterControl.ValueRW;
 
         // Rotate move input and velocity to take into account parent rotation
-        if(characterBody.ParentEntity != Entity.Null)
+        if (characterBody.ParentEntity != Entity.Null)
         {
             characterControl.MoveVector = math.rotate(characterBody.RotationFromParent, characterControl.MoveVector);
             characterBody.RelativeVelocity = math.rotate(characterBody.RotationFromParent, characterBody.RelativeVelocity);
         }
-        
+
         if (characterBody.IsGrounded)
         {
             // Move on ground
@@ -100,7 +100,7 @@ public readonly partial struct FirstPersonCharacterAspect : IAspect, IKinematicC
                     characterBody.RelativeVelocity = tmpVelocity;
                 }
             }
-            
+
             // Gravity
             CharacterControlUtilities.AccelerateVelocity(ref characterBody.RelativeVelocity, characterComponent.Gravity, deltaTime);
 
@@ -131,33 +131,44 @@ public readonly partial struct FirstPersonCharacterAspect : IAspect, IKinematicC
             out float canceledPitchDegrees,
             out characterComponent.ViewLocalRotation);
     }
-    
+
     #region Character Processor Callbacks
     public void UpdateGroundingUp(
         ref FirstPersonCharacterUpdateContext context,
         ref KinematicCharacterUpdateContext baseContext)
     {
         ref KinematicCharacterBody characterBody = ref CharacterAspect.CharacterBody.ValueRW;
-        
+
         CharacterAspect.Default_UpdateGroundingUp(ref characterBody);
     }
-    
+
     public bool CanCollideWithHit(
-        ref FirstPersonCharacterUpdateContext context, 
+        ref FirstPersonCharacterUpdateContext context,
         ref KinematicCharacterUpdateContext baseContext,
         in BasicHit hit)
     {
-        return PhysicsUtilities.IsCollidable(hit.Material);
+        if (!PhysicsUtilities.IsCollidable(hit.Material))
+        {
+            return false;
+        }
+
+        FirstPersonCharacterComponent characterComponent = CharacterComponent.ValueRO;
+        if (PhysicsUtilities.HasPhysicsTag(in baseContext.PhysicsWorld, hit.RigidBodyIndex, CustomPhysicsBodyTags.Nothing))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public bool IsGroundedOnHit(
-        ref FirstPersonCharacterUpdateContext context, 
+        ref FirstPersonCharacterUpdateContext context,
         ref KinematicCharacterUpdateContext baseContext,
-        in BasicHit hit, 
+        in BasicHit hit,
         int groundingEvaluationType)
     {
         FirstPersonCharacterComponent characterComponent = CharacterComponent.ValueRO;
-        
+
         return CharacterAspect.Default_IsGroundedOnHit(
             in this,
             ref context,
@@ -179,7 +190,7 @@ public readonly partial struct FirstPersonCharacterAspect : IAspect, IKinematicC
         ref KinematicCharacterBody characterBody = ref CharacterAspect.CharacterBody.ValueRW;
         ref float3 characterPosition = ref CharacterAspect.LocalTransform.ValueRW.Position;
         FirstPersonCharacterComponent characterComponent = CharacterComponent.ValueRO;
-        
+
         CharacterAspect.Default_OnMovementHit(
             in this,
             ref context,
@@ -216,7 +227,7 @@ public readonly partial struct FirstPersonCharacterAspect : IAspect, IKinematicC
         float3 originalVelocityDirection)
     {
         FirstPersonCharacterComponent characterComponent = CharacterComponent.ValueRO;
-        
+
         CharacterAspect.Default_ProjectVelocityOnHits(
             ref velocity,
             ref characterIsGrounded,

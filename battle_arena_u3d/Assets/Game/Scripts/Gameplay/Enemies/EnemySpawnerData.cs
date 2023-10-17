@@ -13,6 +13,7 @@ public struct EnemySpawnerData : IComponentData
 
 public struct EnemyPrefabBufferElement : IBufferElementData
 {
+    public CharacterType Type;
     public Entity PrefabEntity;
-    public EnemyType Type;
+    public Entity PrefabProjectile;
 }

@@ -42,5 +42,5 @@ public struct ThirdPersonCharacterComponent : IComponentData
 public struct ThirdPersonCharacterControl : IComponentData
 {
     public float3 MoveVector;
-    public bool Jump;
+    public bool Attack;
 }

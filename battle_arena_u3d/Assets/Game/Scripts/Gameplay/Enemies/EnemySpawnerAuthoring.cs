@@ -5,7 +5,7 @@ using Random = Unity.Mathematics.Random;
 
 public class EnemySpawnerAuthoring : MonoBehaviour
 {
-    public EnemyPrefanInfo[] EnemyPrefabs;
+    public CharacterPrefabInfo[] EnemyPrefabs;
     public int EnemyPerTurn;
     public float Interval;
     public float MinRadius;

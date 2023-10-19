@@ -24,7 +24,7 @@ public struct CharacterData : IComponentData
     public float Speed;
     public int Damage;
     public int Coin;
-    // public float AttackRange;
+    public float AttackRange;
 
     public static CharacterData Default()
     {
@@ -35,7 +35,7 @@ public struct CharacterData : IComponentData
             Speed = 3,
             Damage = 10,
             Coin = 100,
-            // AttackRange = 3
+            AttackRange = 3
         };
     }
 }

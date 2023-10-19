@@ -46,7 +46,8 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
     {
         public float currentNormalizedTime;
         public float previousNormalizedTime;
-        public bool stopped;
+        public bool stoppedCurrent;
+        public bool stoppedPrevious;
     }
 
     public struct GpuEcsAttachmentAnchorDataBufferElement : IBufferElementData

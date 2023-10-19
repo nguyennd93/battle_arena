@@ -57,7 +57,8 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
                     gpuEcsAnimatorState = new GpuEcsAnimatorStateComponent()
                     {
                         currentNormalizedTime = gpuEcsAnimatorControl.startNormalizedTime,
-                        stopped = false,
+                        stoppedPrevious = false,
+                        stoppedCurrent = false
                     };
                     gpuEcsAnimatorInitialized.initialized = true;
                 }
@@ -75,7 +76,8 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
                     {
                         currentNormalizedTime = gpuEcsAnimatorControl.startNormalizedTime,
                         previousNormalizedTime = gpuEcsAnimatorState.currentNormalizedTime,
-                        stopped = false,
+                        stoppedPrevious = false,
+                        stoppedCurrent = false
                     };
                 }
                 else
@@ -87,17 +89,18 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
 
                 GpuEcsAnimatorControlStates controlState = gpuEcsAnimatorControlState.state;
                 if (gpuEcsAnimatorControlState.state == GpuEcsAnimatorControlStates.Start)
-                    gpuEcsAnimatorState.stopped = false;
+                    gpuEcsAnimatorState.stoppedCurrent = false;
                 else if (gpuEcsAnimatorControlState.state == GpuEcsAnimatorControlStates.Stop)
-                    gpuEcsAnimatorState.stopped = true;
+                    gpuEcsAnimatorState.stoppedCurrent = true;
                 gpuEcsAnimatorControlState.state = GpuEcsAnimatorControlStates.KeepCurrentState;
 
-                if(!gpuEcsAnimatorState.stopped)
+                if (!gpuEcsAnimatorState.stoppedCurrent)
                 {
-                    UpdateAnimatorState(ref gpuEcsAnimatorState.currentNormalizedTime, ref gpuEcsAnimatorState.stopped, ref gpuEcsAnimatorEventBuffer,
+                    UpdateAnimatorState(ref gpuEcsAnimatorState.currentNormalizedTime, ref gpuEcsAnimatorState.stoppedCurrent,
+                        ref gpuEcsAnimatorEventBuffer,
                         gpuEcsAnimatorTransitionInfo.current, controlState, gpuEcsAnimationDataBuffer, gpuEcsAnimationEventOccurenceBuffer,
                         out float primaryBlendFactor, out float primaryTransitionToNextFrame, out int primaryFrameIndex,
-                        out float secondaryBlendFactor, out float secondaryTransitionToNextFrame, out int secondaryFrameIndex, 
+                        out float secondaryBlendFactor, out float secondaryTransitionToNextFrame, out int secondaryFrameIndex,
                         sortKey, gpuEcsAnimatorEntity);
                     if (gpuEcsAnimatorTransitionInfo.blendPreviousToCurrent >= 1f)
                     {
@@ -106,16 +109,17 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
                             secondaryBlendFactor, secondaryTransitionToNextFrame, secondaryFrameIndex, 0,
                             0, 0, 0, 0,
                             0, 0, 0, 0);
-                        
+
                         //Apply attachment anchor transforms
                         for (int attachmentAnchorIndex = 0; attachmentAnchorIndex < gpuEcsAnimationData.nbrOfAttachmentAnchors; attachmentAnchorIndex++)
                         {
                             int baseIndex = gpuEcsAnimationData.totalNbrOfFrames * attachmentAnchorIndex;
-                            gpuEcsCurrentAttachmentAnchors[attachmentAnchorIndex] = new GpuEcsCurrentAttachmentAnchorBufferElement() {
+                            gpuEcsCurrentAttachmentAnchors[attachmentAnchorIndex] = new GpuEcsCurrentAttachmentAnchorBufferElement()
+                            {
                                 currentTransform = LerpBlend(gpuEcsAttachmentAnchorData, baseIndex,
-                                    primaryFrameIndex, secondaryFrameIndex, 
+                                    primaryFrameIndex, secondaryFrameIndex,
                                     primaryTransitionToNextFrame, secondaryTransitionToNextFrame,
-                                    secondaryBlendFactor) 
+                                    secondaryBlendFactor)
                             };
                         }
                     }
@@ -130,7 +134,8 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
 
                         float previousToCurrent = gpuEcsAnimatorTransitionInfo.blendPreviousToCurrent;
                         float currentToPrevious = 1f - previousToCurrent;
-                        UpdateAnimatorState(ref gpuEcsAnimatorState.previousNormalizedTime, ref gpuEcsAnimatorState.stopped,  ref gpuEcsAnimatorEventBuffer,
+                        UpdateAnimatorState(ref gpuEcsAnimatorState.previousNormalizedTime, ref gpuEcsAnimatorState.stoppedPrevious,
+                            ref gpuEcsAnimatorEventBuffer,
                             gpuEcsAnimatorTransitionInfo.previous, controlState, gpuEcsAnimationDataBuffer, gpuEcsAnimationEventOccurenceBuffer,
                             out float previousPrimaryBlendFactor, out float previousPrimaryTransitionToNextFrame, out int previousPrimaryFrameIndex,
                             out float previousSecondaryBlendFactor, out float previousSecondaryTransitionToNextFrame, out int previousSecondaryFrameIndex,
@@ -260,7 +265,7 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
                 int endFrame = animationData.nbrOfFramesPerSample - 1;
                 float animationLength = (float)endFrame / GlobalConstants.SampleFrameRate;
                 float currentTime = normalizedTime * animationLength;
-                currentTime += deltaTime * animatorInfo.speedFactor * blendSpeedAdjustment;
+                if(!stopped) currentTime += deltaTime * animatorInfo.speedFactor * blendSpeedAdjustment;
                 float normalizedTimeLastUpdate = normalizedTime;
                 normalizedTime = currentTime / animationLength;
                 

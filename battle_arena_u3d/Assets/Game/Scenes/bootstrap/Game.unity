@@ -716,7 +716,6 @@ GameObject:
   - component: {fileID: 6972145401762189700}
   - component: {fileID: 4271436627589070066}
   - component: {fileID: 5639156014855765453}
-  - component: {fileID: 6506975288762628108}
   m_Layer: 0
   m_Name: Arena
   m_TagString: Untagged
@@ -724,28 +723,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &6506975288762628108
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5850561635910101902}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8563135981553767809, guid: 5a518c11e08034bea8058b0a4ea15176, type: 3}
 --- !u!4 &6972145401762189700
 Transform:
   m_ObjectHideFlags: 0

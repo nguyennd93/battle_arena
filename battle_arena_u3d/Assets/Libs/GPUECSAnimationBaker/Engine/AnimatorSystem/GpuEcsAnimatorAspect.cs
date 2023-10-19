@@ -40,7 +40,7 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
 
         public bool IsStop()
         {
-            return state.ValueRO.stopped;
+            return state.ValueRO.stoppedCurrent;
         }
     }
 }

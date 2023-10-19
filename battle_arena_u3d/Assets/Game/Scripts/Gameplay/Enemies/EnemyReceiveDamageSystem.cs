@@ -39,7 +39,7 @@ public partial struct EnemyReceiveDamageSystem : ISystem
             Damage = damage,
             PlayerAction = aspect.StateMachine.ValueRO.CurrentState,
             Direction = aspect.CharacterComponent.ValueRO.Direction,
-            // AttackRange = aspect.CharacterData.ValueRO.AttackRange
+            AttackRange = aspect.CharacterData.ValueRO.AttackRange
         }.ScheduleParallel(_enemyQuery, state.Dependency);
     }
 
@@ -49,7 +49,7 @@ public partial struct EnemyReceiveDamageSystem : ISystem
         // [ReadOnly] public DynamicBuffer<SkillDamageBufferElementData> Skills;
         public float3 Direction;
         public float3 Target;
-        // public float AttackRange;
+        public float AttackRange;
 
         public int Damage;
         public StateType PlayerAction;
@@ -68,7 +68,7 @@ public partial struct EnemyReceiveDamageSystem : ISystem
             // }
 
             var enemyDirect = math.normalize(Target - transform.Position);
-            if (math.distance(Target, transform.Position) <= math.max(0f, rangeBonus) && IsSameDirection(enemyDirect.xz, Direction.xz) && (PlayerAction == StateType.Attack || haveSkill))
+            if (math.distance(Target, transform.Position) <= math.max(AttackRange, rangeBonus) && IsSameDirection(enemyDirect.xz, Direction.xz) && (PlayerAction == StateType.Attack || haveSkill))
             {
                 if (characterData.HP > 0f)
                     characterData.HP -= Damage + damageOnSkill;

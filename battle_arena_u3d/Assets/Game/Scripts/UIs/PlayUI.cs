@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using StormStudio.Common.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayUI : UIController
 {
@@ -10,31 +11,38 @@ public class PlayUI : UIController
     [SerializeField] TMP_Text _textMelee;
     [SerializeField] TMP_Text _textRange;
 
-    System.Action _onAttack;
-    System.Action _onSkill;
+    [Header("Button Skill")]
+    [SerializeField] Button _btnSkill;
+    [SerializeField] Image _skillMask;
 
-    public void Setup(string userName, int MaximumHP, System.Action onAttack, System.Action onSkill)
+    public System.Action OnSetting;
+
+    public void Setup(string userName, int MaximumHP)
     {
         _profile.SetName(userName);
-        _profile.SetEnemiesKill(0);
         _profile.SetHP(MaximumHP, MaximumHP);
-
-        UpdateAmountEnemies(0, 0);
     }
 
-    public void UpdateAmountEnemies(int countMelee, int countRange)
+    public void UpdateGameInfo(GameInfo info)
     {
-        _textMelee.text = countMelee.ToString();
-        _textRange.text = countRange.ToString();
+        _textMelee.text = Mathf.Max(info.MeleeSpawn - info.MeleeDead).ToString();
+        _textRange.text = Mathf.Max(info.RangeSpawn - info.RangeDead).ToString();
+        _profile.UpdateInfo(info);
     }
 
-    public void TouchedAttack()
+    public void UpdateHP(int hp, int maxHP)
     {
-        _onAttack?.Invoke();
+        _profile.SetHP(hp, maxHP);
     }
 
-    public void TouchedSkill()
+    public void UpdateSkillReload(float percent)
     {
-        _onSkill?.Invoke();
+        _btnSkill.interactable = percent >= 0.99f;
+        _skillMask.fillAmount = 1f - percent;
+    }
+
+    public void TouchedSetting()
+    {
+        OnSetting?.Invoke();
     }
 }

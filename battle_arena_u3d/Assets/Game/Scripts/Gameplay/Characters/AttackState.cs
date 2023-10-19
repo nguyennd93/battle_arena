@@ -23,27 +23,35 @@ public struct AttackState : ICharacterState
             });
             context.EndFrameFCB.AddComponent(context.ChunkIndex, entity, new ProjectileData()
             {
-                Direction = aspect.CharacterComponent.ValueRO.Direction,
+                Damage = aspect.CharacterData.ValueRO.Damage,
+                Direction = aspect.WorldTransform.ValueRO.Forward,
                 Speed = context.GameConfig.ProjectileSpeed,
                 Lifetime = context.GameConfig.ProjectileLifetime
             });
         }
-        else if (aspect.CharacterData.ValueRO.Type == CharacterType.Main)
+        else
         {
-            var entity = context.EndFrameFCB.Instantiate(context.ChunkIndex, context.GameResource.PrefabPlayerAttack);
-            context.EndFrameFCB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
+            if (aspect.CharacterData.ValueRO.Type == CharacterType.Main)
             {
-                Position = aspect.Transform.ValueRO.Position + new float3(0f, 1.5f, 0f),
-                Rotation = quaternion.LookRotation(new float3(aspect.CharacterComponent.ValueRO.Direction.x, 0f, aspect.CharacterComponent.ValueRO.Direction.z), new float3(0f, 1f, 0f)),
-                Scale = 1f,
-            });
-            context.EndFrameFCB.AddComponent<SkillData>(context.ChunkIndex, entity, new SkillData()
+                var entity = context.EndFrameFCB.Instantiate(context.ChunkIndex, context.GameResource.PrefabPlayerAttack);
+                context.EndFrameFCB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
+                {
+                    Position = aspect.Transform.ValueRO.Position + new float3(0f, 1.5f, 0f),
+                    Rotation = quaternion.LookRotation(aspect.WorldTransform.ValueRO.Forward, new float3(0f, 1f, 0f)),
+                    Scale = 1f,
+                });
+                context.EndFrameFCB.AddComponent<EffectData>(context.ChunkIndex, entity, new EffectData()
+                {
+                    Lifetime = context.GameConfig.AttackLifetime
+                });
+            }
+            aspect.SentDamageBuffers.Add(new SentDamageElementData()
             {
-                Lifetime = context.GameConfig.AttackLifetime
+                Damage = aspect.CharacterData.ValueRO.Damage,
+                Direct = aspect.WorldTransform.ValueRO.Forward
             });
         }
-
-        aspect.StateData.ValueRW.IntervalAttack = aspect.StateData.ValueRW.AttackRate;
+        aspect.StateData.ValueRW.IntervalAttack = aspect.CharacterData.ValueRW.AttackRate;
     }
 
     public void OnStateExit(StateType nextState, ref ThirdPersonCharacterUpdateContext context, ref KinematicCharacterUpdateContext baseContext, in ThirdPersonCharacterAspect aspect)

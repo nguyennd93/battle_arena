@@ -9,7 +9,9 @@ using StormStudio.GameOps;
 public partial class GameFlow : MonoBehaviour
 {
     public string UserName { get { return PlayerPrefs.GetString("KEY_USER_NAME", "DNguyen"); } set { PlayerPrefs.SetString("KEY_USER_NAME", value); PlayerPrefs.Save(); } }
-    public int MaximumHP { get { return 2000; } }
+    public int TurnAmount { get { return PlayerPrefs.GetInt("KEY_AMOUNT", 10); } set { PlayerPrefs.SetInt("KEY_AMOUNT", value); PlayerPrefs.Save(); } }
+    public int Interval { get { return PlayerPrefs.GetInt("KEY_INTERVAL", 1); } set { PlayerPrefs.SetInt("KEY_INTERVAL", value); PlayerPrefs.Save(); } }
+
 
     public static GameFlow Instance { get; private set; }
 

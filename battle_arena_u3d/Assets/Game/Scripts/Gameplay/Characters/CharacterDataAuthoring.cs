@@ -9,7 +9,6 @@ using UnityEngine;
 public class CharacterDataAuthoring : MonoBehaviour
 {
     public CharacterData Data;
-    public float AttackRate;
 
     class Baker : Baker<CharacterDataAuthoring>
     {
@@ -19,11 +18,13 @@ public class CharacterDataAuthoring : MonoBehaviour
             AddComponent(entity, authoring.Data);
             AddComponent(entity, new CharacterState()
             {
-                AttackRate = authoring.AttackRate,
+                IntervalSkill = 0f,
                 IntervalAttack = 0f,
-                Dead = false
+                Dead = false,
+                Attack = false,
             });
-            // AddBuffer<SkillDamageBufferElementData>(entity);
+            AddBuffer<ReceiveDamageElementData>(entity);
+            AddBuffer<SentDamageElementData>(entity);
         }
     }
 }

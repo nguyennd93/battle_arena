@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,8 +10,7 @@ public class UIProfile : MonoBehaviour
     [SerializeField] TMP_Text _textName;
     [SerializeField] TMP_Text _textHP;
     [SerializeField] Slider _sliderHP;
-    [SerializeField] TMP_Text _totalKill;
-
+    [SerializeField] TMP_Text _textKill;
 
     public void SetName(string name)
     {
@@ -24,8 +24,8 @@ public class UIProfile : MonoBehaviour
         _sliderHP.value = hp;
     }
 
-    public void SetEnemiesKill(int amount)
+    public void UpdateInfo(GameInfo info)
     {
-        _totalKill.text = amount.ToString();
+        _textKill.text = (info.MeleeDead + info.RangeDead).ToString();
     }
 }

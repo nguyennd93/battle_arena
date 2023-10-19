@@ -15,9 +15,8 @@ public enum StateType
 
 public struct CharacterState : IComponentData
 {
-    public float AttackRate;
     public float IntervalAttack;
-
+    public float IntervalSkill;
     public bool Attack;
     public bool Dead;
 }

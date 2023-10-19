@@ -410,10 +410,6 @@ MonoBehaviour:
     SimulateDynamicBody: 1
     Mass: 100
   Character:
-    Direction:
-      x: 0
-      y: 0
-      z: 0
     RotationSharpness: 25
     GroundMaxSpeed: 8
     GroundedMovementSharpness: 15
@@ -483,12 +479,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Data:
     Type: 0
-    HP: 1000
+    TotalHP: 4000
+    HP: 4000
     Speed: 10
     Damage: 100
     Coin: 1000
     AttackRange: 5
-  AttackRate: 0
+    AttackRate: 1
+    SkillRate: 8
 --- !u!1 &7480350192958656590
 GameObject:
   m_ObjectHideFlags: 0

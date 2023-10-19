@@ -20,7 +20,6 @@ public struct DieState : ICharacterState
     {
         if (aspect.AnimationAspect.IsStop())
         {
-            aspect.Transform.ValueRW.Position = new float3(0f, -500f, 0f);
             aspect.CharacterAspect.DeferredImpulsesBuffer.Clear();
             context.EndFrameFCB.AddComponent<DeadTag>(context.ChunkIndex, aspect.CurrentEntity);
         }

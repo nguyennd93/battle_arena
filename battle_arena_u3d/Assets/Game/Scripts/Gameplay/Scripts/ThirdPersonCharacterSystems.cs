@@ -8,8 +8,8 @@ using Unity.Transforms;
 using Unity.CharacterController;
 using Unity.Burst.Intrinsics;
 
-[UpdateInGroup(typeof(KinematicCharacterPhysicsUpdateGroup))]
 [BurstCompile]
+[UpdateInGroup(typeof(KinematicCharacterPhysicsUpdateGroup))]
 public partial struct ThirdPersonCharacterPhysicsUpdateSystem : ISystem
 {
     private EntityQuery _characterQuery;
@@ -31,6 +31,8 @@ public partial struct ThirdPersonCharacterPhysicsUpdateSystem : ISystem
         _baseContext.OnSystemCreate(ref state);
 
         state.RequireForUpdate(_characterQuery);
+        state.RequireForUpdate<GameConfig>();
+        state.RequireForUpdate<GameResource>();
         state.RequireForUpdate<PhysicsWorldSingleton>();
     }
 
@@ -42,7 +44,7 @@ public partial struct ThirdPersonCharacterPhysicsUpdateSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         _context.OnSystemUpdate(ref state,
-            SystemAPI.GetSingletonRW<BeginSimulationEntityCommandBufferSystem.Singleton>().ValueRW.CreateCommandBuffer(state.WorldUnmanaged),
+            SystemAPI.GetSingletonRW<EndSimulationEntityCommandBufferSystem.Singleton>().ValueRW.CreateCommandBuffer(state.WorldUnmanaged),
             SystemAPI.GetComponent<GameResource>(SystemAPI.GetSingletonEntity<GameResource>()),
             SystemAPI.GetComponent<GameConfig>(SystemAPI.GetSingletonEntity<GameConfig>()));
         _baseContext.OnSystemUpdate(ref state, SystemAPI.Time, SystemAPI.GetSingleton<PhysicsWorldSingleton>());
@@ -79,8 +81,8 @@ public partial struct ThirdPersonCharacterPhysicsUpdateSystem : ISystem
     }
 }
 
-[UpdateInGroup(typeof(KinematicCharacterVariableUpdateGroup))]
 [BurstCompile]
+[UpdateInGroup(typeof(KinematicCharacterVariableUpdateGroup))]
 public partial struct ThirdPersonCharacterVariableUpdateSystem : ISystem
 {
     private EntityQuery _characterQuery;
@@ -102,6 +104,8 @@ public partial struct ThirdPersonCharacterVariableUpdateSystem : ISystem
         _baseContext.OnSystemCreate(ref state);
 
         state.RequireForUpdate(_characterQuery);
+        state.RequireForUpdate<GameConfig>();
+        state.RequireForUpdate<GameResource>();
     }
 
     [BurstCompile]
@@ -112,7 +116,7 @@ public partial struct ThirdPersonCharacterVariableUpdateSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         _context.OnSystemUpdate(ref state,
-            SystemAPI.GetSingletonRW<BeginSimulationEntityCommandBufferSystem.Singleton>().ValueRW.CreateCommandBuffer(state.WorldUnmanaged),
+            SystemAPI.GetSingletonRW<EndSimulationEntityCommandBufferSystem.Singleton>().ValueRW.CreateCommandBuffer(state.WorldUnmanaged),
             SystemAPI.GetComponent<GameResource>(SystemAPI.GetSingletonEntity<GameResource>()),
             SystemAPI.GetComponent<GameConfig>(SystemAPI.GetSingletonEntity<GameConfig>()));
         _baseContext.OnSystemUpdate(ref state, SystemAPI.Time, SystemAPI.GetSingleton<PhysicsWorldSingleton>());

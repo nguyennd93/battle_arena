@@ -37,6 +37,10 @@ public struct AttackState : ICharacterState
                 Rotation = quaternion.LookRotation(new float3(aspect.CharacterComponent.ValueRO.Direction.x, 0f, aspect.CharacterComponent.ValueRO.Direction.z), new float3(0f, 1f, 0f)),
                 Scale = 1f,
             });
+            context.EndFrameFCB.AddComponent<SkillData>(context.ChunkIndex, entity, new SkillData()
+            {
+                Lifetime = context.GameConfig.AttackLifetime
+            });
         }
 
         aspect.StateData.ValueRW.IntervalAttack = aspect.StateData.ValueRW.AttackRate;

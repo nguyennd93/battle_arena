@@ -50,10 +50,10 @@ public class CharacterPrefabInfo
 }
 
 
-// public struct SkillData : IComponentData
-// {
-//     public float Lifetime;
-// }
+public struct SkillData : IComponentData
+{
+    public float Lifetime;
+}
 
 // public struct SkillDamageBufferElementData : IBufferElementData
 // {

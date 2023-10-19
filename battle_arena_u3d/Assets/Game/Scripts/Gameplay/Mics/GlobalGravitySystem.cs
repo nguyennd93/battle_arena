@@ -8,7 +8,6 @@ using Unity.Physics.Stateful;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 using Unity.CharacterController;
-using Gameplay;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))] // update in variable update because the camera can use gravity to adjust its up direction
 [UpdateBefore(typeof(KinematicCharacterVariableUpdateGroup))]

@@ -24,6 +24,7 @@ public struct GameConfig : IComponentData
     public int MaximumHP;
     public float SkillLifetime;
     public float IntervalSkill;
+    public float AttackLifetime;
 }
 
 [System.Serializable]

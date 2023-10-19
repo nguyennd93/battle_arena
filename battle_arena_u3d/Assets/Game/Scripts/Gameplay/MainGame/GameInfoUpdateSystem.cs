@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateInGroup(typeof(LateSimulationSystemGroup))]
 public partial class GameInfoUpdateSystem : SystemBase
 {
     protected override void OnUpdate()

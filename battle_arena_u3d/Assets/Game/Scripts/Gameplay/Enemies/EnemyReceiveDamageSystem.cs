@@ -9,7 +9,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
-[UpdateInGroup(typeof(LateSimulationSystemGroup))]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct EnemyReceiveDamageSystem : ISystem
 {
     EntityQuery _enemyQuery;

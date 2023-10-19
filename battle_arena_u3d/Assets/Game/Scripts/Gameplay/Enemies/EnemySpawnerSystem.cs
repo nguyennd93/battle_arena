@@ -9,6 +9,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct EnemySpawnerSystem : ISystem
 {
     [BurstCompile]

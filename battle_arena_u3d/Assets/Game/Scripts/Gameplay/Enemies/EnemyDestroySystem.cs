@@ -9,7 +9,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
 public partial struct EnemyDestroySystem : ISystem
 {
     EntityQuery _enemyQuery;
@@ -23,12 +23,14 @@ public partial struct EnemyDestroySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSystem = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
-        state.Dependency = new EnemyDestroyJob()
+        
+        
+        new EnemyDestroyJob()
         {
             ecb = ecb
-        }.ScheduleParallel(_enemyQuery, state.Dependency);
+        }.Run(_enemyQuery);
     }
 
     private partial struct EnemyDestroyJob : IJobEntity

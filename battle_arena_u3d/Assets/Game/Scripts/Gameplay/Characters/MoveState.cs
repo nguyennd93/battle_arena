@@ -32,15 +32,16 @@ public struct MoveState : ICharacterState
         if (math.length(characterControl.MoveVector) > 0.01f)
             character.Direction = characterControl.MoveVector;
 
-        if (aspect.CharacterData.ValueRO.Type == CharacterType.Main)
+        if (aspect.CharacterData.ValueRO.Type == CharacterType.Main && aspect.CharacterControl.ValueRO.Skill)
         {
-            // var entity = context.EndFrameFCB.Instantiate(context.ChunkIndex, context.GameResource.PrefabPlayerSkill);
-            // context.EndFrameFCB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
-            // {
-            //     Position = aspect.Transform.ValueRO.Position + new float3(0f, 0f, 0f),
-            //     Rotation = quaternion.LookRotation(new float3(aspect.CharacterComponent.ValueRO.Direction.x, 0f, aspect.CharacterComponent.ValueRO.Direction.z), new float3(0f, 1f, 0f)),
-            //     Scale = 1f,
-            // });
+            aspect.CharacterControl.ValueRW.Skill = false;
+            var entity = context.EndFrameFCB.Instantiate(context.ChunkIndex, context.GameResource.PrefabPlayerSkill);
+            context.EndFrameFCB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
+            {
+                Position = aspect.Transform.ValueRO.Position + new float3(0f, 0f, 0f),
+                Rotation = quaternion.LookRotation(new float3(aspect.CharacterComponent.ValueRO.Direction.x, 0f, aspect.CharacterComponent.ValueRO.Direction.z), new float3(0f, 1f, 0f)),
+                Scale = 1f,
+            });
             // context.EndFrameFCB.SetComponent<SkillData>(context.ChunkIndex, entity, new SkillData()
             // {
             //     Lifetime = context.GameConfig.SkillLifetime

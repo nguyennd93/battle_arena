@@ -9,7 +9,7 @@ public partial class GameFlow : MonoBehaviour
     {
         if (stateEvent == StateEvent.Enter)
         {
-
+            _gsMachine.ChangeState(GameState.Gameplay);
         }
         else if (stateEvent == StateEvent.Exit)
         {

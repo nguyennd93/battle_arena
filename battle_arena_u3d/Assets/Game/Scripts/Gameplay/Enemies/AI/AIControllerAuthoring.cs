@@ -3,14 +3,14 @@ using Unity.Entities;
 
 public class AIControllerAuthoring : MonoBehaviour
 {
-    public AIController AIController;
+    public AIData Data;
 
     class Baker : Baker<AIControllerAuthoring>
     {
         public override void Bake(AIControllerAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
-            AddComponent(entity, authoring.AIController);
+            AddComponent(entity, authoring.Data);
         }
     }
 }

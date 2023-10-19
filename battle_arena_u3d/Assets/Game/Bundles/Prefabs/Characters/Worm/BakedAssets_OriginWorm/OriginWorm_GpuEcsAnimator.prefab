@@ -111,8 +111,6 @@ GameObject:
   - component: {fileID: 2300978667624509563}
   - component: {fileID: 5710837492733067097}
   - component: {fileID: 768815596863761594}
-  - component: {fileID: 9071370706389884821}
-  - component: {fileID: 4326479433960001789}
   - component: {fileID: 7225710950860128983}
   m_Layer: 0
   m_Name: OriginWorm_GpuEcsAnimator
@@ -149,8 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b9f7cd060f649fa9e2c2ba4f8b5c4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AIController:
-    DistanceCanAttack: 10
+  Data:
+    AttackRange: 10
 --- !u!114 &2300978667624509563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,8 +187,12 @@ MonoBehaviour:
     KillVelocityWhenExceedMaxIterations: 1
     DetectObstructionsForParentBodyMovement: 0
     SimulateDynamicBody: 1
-    Mass: 1
+    Mass: 1000
   Character:
+    Direction:
+      x: 0
+      y: 0
+      z: 0
     RotationSharpness: 25
     GroundMaxSpeed: 1.5
     GroundedMovementSharpness: 2
@@ -212,6 +214,15 @@ MonoBehaviour:
       HasMaxDownwardSlopeChangeAngle: 0
       MaxDownwardSlopeChangeAngle: 90
       ConstrainVelocityToGroundPlane: 1
+    IgnoreCollisionsTag:
+      Tag00: 1
+      Tag01: 0
+      Tag02: 0
+      Tag03: 0
+      Tag04: 0
+      Tag05: 0
+      Tag06: 0
+      Tag07: 0
 --- !u!114 &5710837492733067097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,7 +321,7 @@ MonoBehaviour:
     m_CollidesWithCategories:
       m_Override: 0
       m_Value:
-        Category00: 0
+        Category00: 1
         Category01: 1
         Category02: 1
         Category03: 0
@@ -373,33 +384,8 @@ MonoBehaviour:
     Speed: 1
     Damage: 50
     Coin: 500
+    AttackRange: 10
   AttackRate: 3
---- !u!114 &9071370706389884821
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5985098503641769869}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1bf16125023b488ab327f46a74311a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &4326479433960001789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5985098503641769869}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb5b5f571d06a4086b4b5193cfe296d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Prefab: {fileID: 8797447228037929493, guid: ef62bc89b4c734618827d1d51ef85ea8, type: 3}
-  Speed: 7
 --- !u!114 &7225710950860128983
 MonoBehaviour:
   m_ObjectHideFlags: 0

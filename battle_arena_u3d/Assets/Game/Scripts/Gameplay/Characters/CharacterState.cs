@@ -17,12 +17,9 @@ public struct CharacterState : IComponentData
 {
     public float AttackRate;
     public float IntervalAttack;
-}
 
-public struct ForceChangeState : IComponentData
-{
-    public bool Force;
-    public StateType State;
+    public bool Attack;
+    public bool Dead;
 }
 
 public interface ICharacterState

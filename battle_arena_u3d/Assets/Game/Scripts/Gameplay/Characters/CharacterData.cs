@@ -14,7 +14,7 @@ public enum CharacterType
 }
 
 public struct PlayerTag : IComponentData { }
-public struct EnemyTag : IComponentData { }
+public struct DeadTag : IComponentData { }
 
 [System.Serializable]
 public struct CharacterData : IComponentData
@@ -24,6 +24,7 @@ public struct CharacterData : IComponentData
     public float Speed;
     public int Damage;
     public int Coin;
+    // public float AttackRange;
 
     public static CharacterData Default()
     {
@@ -33,7 +34,8 @@ public struct CharacterData : IComponentData
             HP = 100,
             Speed = 3,
             Damage = 10,
-            Coin = 100
+            Coin = 100,
+            // AttackRange = 3
         };
     }
 }
@@ -46,3 +48,17 @@ public class CharacterPrefabInfo
     public GameObject Prefab;
     public GameObject PrefabProjectile;
 }
+
+
+// public struct SkillData : IComponentData
+// {
+//     public float Lifetime;
+// }
+
+// public struct SkillDamageBufferElementData : IBufferElementData
+// {
+//     public float3 Position;
+//     public int Damage;
+//     public float Radius;
+//     public float Lifetime;
+// }

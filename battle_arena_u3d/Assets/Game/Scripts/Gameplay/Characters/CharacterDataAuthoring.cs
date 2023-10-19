@@ -20,8 +20,10 @@ public class CharacterDataAuthoring : MonoBehaviour
             AddComponent(entity, new CharacterState()
             {
                 AttackRate = authoring.AttackRate,
-                IntervalAttack = 0f
+                IntervalAttack = 0f,
+                Dead = false
             });
+            // AddBuffer<SkillDamageBufferElementData>(entity);
         }
     }
 }

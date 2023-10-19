@@ -156,7 +156,6 @@ GameObject:
   - component: {fileID: 8303360385823758133}
   - component: {fileID: 8341817597690701390}
   - component: {fileID: 7381051978166030717}
-  - component: {fileID: 5587998319822718163}
   m_Layer: 0
   m_Name: MainCharacter
   m_TagString: Untagged
@@ -411,8 +410,12 @@ MonoBehaviour:
     SimulateDynamicBody: 1
     Mass: 100
   Character:
+    Direction:
+      x: 0
+      y: 0
+      z: 0
     RotationSharpness: 25
-    GroundMaxSpeed: 5
+    GroundMaxSpeed: 8
     GroundedMovementSharpness: 15
     AirAcceleration: 50
     AirMaxSpeed: 10
@@ -432,6 +435,15 @@ MonoBehaviour:
       HasMaxDownwardSlopeChangeAngle: 0
       MaxDownwardSlopeChangeAngle: 90
       ConstrainVelocityToGroundPlane: 1
+    IgnoreCollisionsTag:
+      Tag00: 0
+      Tag01: 0
+      Tag02: 0
+      Tag03: 0
+      Tag04: 0
+      Tag05: 0
+      Tag06: 0
+      Tag07: 0
 --- !u!114 &8303360385823758133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,19 +487,8 @@ MonoBehaviour:
     Speed: 10
     Damage: 100
     Coin: 1000
---- !u!114 &5587998319822718163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1983264975148286886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb5b5f571d06a4086b4b5193cfe296d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Prefab: {fileID: 8797447228037929493, guid: ef62bc89b4c734618827d1d51ef85ea8, type: 3}
+    AttackRange: 5
+  AttackRate: 0
 --- !u!1 &7480350192958656590
 GameObject:
   m_ObjectHideFlags: 0

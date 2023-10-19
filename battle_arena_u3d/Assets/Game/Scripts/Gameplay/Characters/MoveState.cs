@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using GPUECSAnimationBaker.Engine.AnimatorSystem;
 using Unity.CharacterController;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
+using Unity.Transforms;
 using UnityEngine;
 
 public struct MoveState : ICharacterState
@@ -27,6 +29,23 @@ public struct MoveState : ICharacterState
         ref ThirdPersonCharacterControl characterControl = ref aspect.CharacterControl.ValueRW;
 
         aspect.OnBeginHandlePhysicsUpdate(ref context, ref baseContext);
+        if (math.length(characterControl.MoveVector) > 0.01f)
+            character.Direction = characterControl.MoveVector;
+
+        if (aspect.CharacterData.ValueRO.Type == CharacterType.Main)
+        {
+            var entity = context.EndFrameFCB.Instantiate(context.ChunkIndex, context.GameResource.PrefabPlayerSkill);
+            context.EndFrameFCB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
+            {
+                Position = aspect.Transform.ValueRO.Position + new float3(0f, 0f, 0f),
+                Rotation = quaternion.LookRotation(new float3(aspect.CharacterComponent.ValueRO.Direction.x, 0f, aspect.CharacterComponent.ValueRO.Direction.z), new float3(0f, 1f, 0f)),
+                Scale = 1f,
+            });
+            // context.EndFrameFCB.SetComponent<SkillData>(context.ChunkIndex, entity, new SkillData()
+            // {
+            //     Lifetime = context.GameConfig.SkillLifetime
+            // });
+        }
 
         // Rotate move input and velocity to take into account parent rotation
         if (characterBody.ParentEntity != Entity.Null)
@@ -40,7 +59,7 @@ public struct MoveState : ICharacterState
             // Move on ground
             float3 targetVelocity = characterControl.MoveVector * character.GroundMaxSpeed;
             CharacterControlUtilities.StandardGroundMove_Interpolated(ref characterBody.RelativeVelocity, targetVelocity, character.GroundedMovementSharpness, deltaTime, characterBody.GroundingUp, characterBody.GroundHit.Normal);
-            
+
             aspect.AnimationAspect.RunAnimation(math.length(characterControl.MoveVector) > 0 ? 1 : 0);
             if (characterControl.Attack)
             {

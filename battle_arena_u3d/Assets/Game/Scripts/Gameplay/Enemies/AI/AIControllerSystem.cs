@@ -12,15 +12,26 @@ using UnityEngine;
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct AIControllerSystem : ISystem
 {
+    EntityQuery _enemyQuery;
+
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        EntityQueryBuilder builder = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<LocalTransform, ThirdPersonCharacterControl, AIData, CharacterState>();
+        _enemyQuery = state.GetEntityQuery(builder);
+        state.RequireForUpdate(_enemyQuery);
+    }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var position = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetSingletonEntity<PlayerTag>()).Position;
-        new QueryJob()
+        state.Dependency = new QueryJob()
         {
             TargetPosition = position,
             DeltaTime = SystemAPI.Time.DeltaTime
-        }.ScheduleParallel();
+        }.ScheduleParallel(_enemyQuery, state.Dependency);
     }
 
     [BurstCompile]
@@ -29,17 +40,16 @@ public partial struct AIControllerSystem : ISystem
         public float3 TargetPosition;
         public float DeltaTime;
 
-        public void Execute(ref ThirdPersonCharacterControl characterControl, ref ForceChangeState aiAction, ref CharacterState aiState, ref CharacterStateMachine machine, ref AIController aiController, ref LocalTransform localTransform)
+        public void Execute(ref ThirdPersonCharacterControl characterControl, ref LocalTransform localTransform, ref CharacterState stateData, in AIData aiController)
         {
-            aiState.IntervalAttack -= DeltaTime;
+            stateData.IntervalAttack -= DeltaTime;
             var distance = math.distance(TargetPosition, localTransform.Position);
-            if (distance <= aiController.DistanceCanAttack)
+            if (distance <= aiController.AttackRange)
             {
-                if (aiState.IntervalAttack <= 0f)
+                if (stateData.IntervalAttack <= 0f)
                 {
                     characterControl.MoveVector = float3.zero;
-                    aiAction.Force = true;
-                    aiAction.State = StateType.Attack;
+                    stateData.Attack = true;
                 }
                 else
                 {

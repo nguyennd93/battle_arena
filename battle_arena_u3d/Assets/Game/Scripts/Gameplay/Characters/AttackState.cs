@@ -11,22 +11,33 @@ public struct AttackState : ICharacterState
     public void OnStateEnter(StateType previousState, ref ThirdPersonCharacterUpdateContext context, ref KinematicCharacterUpdateContext baseContext, in ThirdPersonCharacterAspect aspect)
     {
         aspect.AnimationAspect.RunAnimation(2, 1f, 1f, 0, 0.3f);
+        aspect.StateData.ValueRW.Attack = false;
 
-        if (aspect.CharacterData.ValueRO.Type == CharacterType.EnemyRange && aspect.StateData.ValueRW.IntervalAttack <= 0f)
+        if (aspect.CharacterData.ValueRO.Type == CharacterType.EnemyRange)
         {
-            var entity = context.EndFrameECB.Instantiate(context.ChunkIndex, aspect.ProjectilePrefab.ValueRO.Prefab);
-            context.EndFrameECB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
+            var entity = context.EndFrameFCB.Instantiate(context.ChunkIndex, context.GameResource.PrefabEnemyProjectile);
+            context.EndFrameFCB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
             {
-                Position = aspect.Transform.ValueRO.Position + new float3(0f, 1.7f, 0f),
-                Scale = 0.4f
+                Position = aspect.Transform.ValueRO.Position + new float3(0f, 1.5f, 0f),
+                Scale = 1f
             });
-            context.EndFrameECB.AddComponent(context.ChunkIndex, entity, new ProjectileData()
+            context.EndFrameFCB.AddComponent(context.ChunkIndex, entity, new ProjectileData()
             {
-                Direction = float3.zero,
-                Speed = aspect.ProjectilePrefab.ValueRO.Speed
+                Direction = aspect.CharacterComponent.ValueRO.Direction,
+                Speed = context.GameConfig.ProjectileSpeed,
+                Lifetime = context.GameConfig.ProjectileLifetime
             });
         }
-
+        else if (aspect.CharacterData.ValueRO.Type == CharacterType.Main)
+        {
+            var entity = context.EndFrameFCB.Instantiate(context.ChunkIndex, context.GameResource.PrefabPlayerAttack);
+            context.EndFrameFCB.SetComponent(context.ChunkIndex, entity, new LocalTransform()
+            {
+                Position = aspect.Transform.ValueRO.Position + new float3(0f, 1.5f, 0f),
+                Rotation = quaternion.LookRotation(new float3(aspect.CharacterComponent.ValueRO.Direction.x, 0f, aspect.CharacterComponent.ValueRO.Direction.z), new float3(0f, 1f, 0f)),
+                Scale = 1f,
+            });
+        }
 
         aspect.StateData.ValueRW.IntervalAttack = aspect.StateData.ValueRW.AttackRate;
     }

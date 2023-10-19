@@ -1317,7 +1317,7 @@ MonoBehaviour:
       animatorStateName: Attack
       animationType: 0
       singleClipData:
-        animationClip: {fileID: 7400000, guid: c8614cb1a97b4be8bb935902b48b5878, type: 3}
+        animationClip: {fileID: 7400000, guid: 3bc22792d9024abcbebaf151cc4d5809, type: 3}
       dualClipBlendData:
         blendParameterName: 
         clip1:

@@ -26,16 +26,14 @@ namespace GPUECSAnimationBaker.Engine.AnimatorSystem
 
         public void StartAnimation()
         {
-            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent()
-            {
+            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent() {
                 state = GpuEcsAnimatorControlStates.Start
             };
         }
-
+        
         public void StopAnimation()
         {
-            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent()
-            {
+            controlState.ValueRW = new GpuEcsAnimatorControlStateComponent() {
                 state = GpuEcsAnimatorControlStates.Stop
             };
         }

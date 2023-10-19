@@ -59,8 +59,6 @@ public class SoundManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        DontDestroyOnLoad(gameObject);
-
         _poolSounds = new ObjectPool<Transform>(_sampleSoundSource.transform);
     }
 

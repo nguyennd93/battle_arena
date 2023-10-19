@@ -8,47 +8,46 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-
+using UnityEngine.VFX;
 
 [BurstCompile]
-[UpdateAfter(typeof(ThirdPersonCharacterPhysicsUpdateSystem))]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct ProjectileMovingSystem : ISystem
 {
     [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<ProjectileData>();
+    }
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSystem = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
         var position = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetSingletonEntity<PlayerTag>()).Position;
-        new MoveJob()
+        new MovingJob()
         {
             ecb = ecb,
             PlayerPosition = position,
             DeltaTime = SystemAPI.Time.DeltaTime
-        }.ScheduleParallel();
+        }.Run();
     }
 
     [BurstCompile]
-    partial struct MoveJob : IJobEntity
+    partial struct MovingJob : IJobEntity
     {
         public EntityCommandBuffer.ParallelWriter ecb;
         public float3 PlayerPosition;
         public float DeltaTime;
 
-        public void Execute(ref LocalTransform localTransform, ref ProjectileData data, Entity entity, [ChunkIndexInQuery] int sortKey)
+        public void Execute(ref LocalTransform transform, ref ProjectileData data, Entity entity, [ChunkIndexInQuery] int sortKey)
         {
-            if (math.distance(data.Direction, float3.zero) <= 0f)
-                data.Direction = math.normalize(PlayerPosition - localTransform.Position);
-            else
-            {
-                localTransform.Position.xz += data.Direction.xz * data.Speed * DeltaTime;
-
-                if (math.distance(localTransform.Position, PlayerPosition) <= 1.8f || math.distance(localTransform.Position, float3.zero) >= 20f)
-                {
-                    ecb.DestroyEntity(sortKey, entity);
-                }
-            }
+            transform.Position.xz += data.Direction.xz * data.Speed * DeltaTime;
+            data.Lifetime -= DeltaTime;
+            if (math.distance(transform.Position, PlayerPosition) < 1.6f || data.Lifetime < 0f)
+                ecb.DestroyEntity(sortKey, entity);
         }
     }
 }

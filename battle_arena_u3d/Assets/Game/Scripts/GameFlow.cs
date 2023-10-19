@@ -8,6 +8,9 @@ using StormStudio.GameOps;
 
 public partial class GameFlow : MonoBehaviour
 {
+    public string UserName { get { return PlayerPrefs.GetString("KEY_USER_NAME", "DNguyen"); } set { PlayerPrefs.SetString("KEY_USER_NAME", value); PlayerPrefs.Save(); } }
+    public int MaximumHP { get { return 2000; } }
+
     public static GameFlow Instance { get; private set; }
 
     public enum GameState

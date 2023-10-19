@@ -8,73 +8,44 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-[BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct EnemyReceiveDamageSystem : ISystem
+public partial class EnemyReceiveDamageSystem : SystemBase
 {
-    EntityQuery _enemyQuery;
-
-    [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    protected override void OnUpdate()
     {
-        EntityQueryBuilder builder = new EntityQueryBuilder(Allocator.Temp).WithAll<CharacterData, CharacterState, LocalTransform>().WithNone<PlayerTag>();
-        _enemyQuery = state.GetEntityQuery(builder);
-        state.RequireForUpdate(_enemyQuery);
-    }
+        Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerTag>();
+        var playerPosition = SystemAPI.GetComponent<LocalTransform>(playerEntity).Position;
+        var playerAttackRange = SystemAPI.GetComponent<CharacterData>(playerEntity).AttackRange;
 
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        var playerEntity = SystemAPI.GetSingletonEntity<PlayerTag>();
-        var position = SystemAPI.GetComponent<LocalTransform>(playerEntity).Position;
-        var damage = SystemAPI.GetComponent<CharacterData>(playerEntity).Damage;
-        var aspect = SystemAPI.GetAspect<ThirdPersonCharacterAspect>(playerEntity);
-        // var skillDamages = SystemAPI.GetBuffer<SkillDamageBufferElementData>(playerEntity);
+        DynamicBuffer<SentDamageElementData> playerSentDamages = SystemAPI.GetBuffer<SentDamageElementData>(playerEntity);
 
-        state.Dependency = new EnemyUpdateHPJob()
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        foreach (var (enemyReceiveDamages, data, transform, entity) in SystemAPI.Query<DynamicBuffer<ReceiveDamageElementData>, CharacterData, LocalToWorld>().WithNone<DeadTag, PlayerTag>().WithEntityAccess())
         {
-            // Skills = skillDamages,
-            Target = position,
-            Damage = damage,
-            PlayerAction = aspect.StateMachine.ValueRO.CurrentState,
-            Direction = aspect.WorldTransform.ValueRO.Forward,
-            AttackRange = aspect.CharacterData.ValueRO.AttackRange
-        }.ScheduleParallel(_enemyQuery, state.Dependency);
-    }
-
-    [BurstCompile]
-    private partial struct EnemyUpdateHPJob : IJobEntity
-    {
-        // [ReadOnly] public DynamicBuffer<SkillDamageBufferElementData> Skills;
-        public float3 Direction;
-        public float3 Target;
-        public float AttackRange;
-
-        public int Damage;
-        public StateType PlayerAction;
-
-        public void Execute(ref CharacterData characterData, ref CharacterState state, ref LocalTransform transform)
-        {
-            int damageOnSkill = 0;
-            float rangeBonus = 0f;
-            bool haveSkill = false;
-
-            var enemyDirect = math.normalize(Target - transform.Position);
-            if (math.distance(Target, transform.Position) <= math.max(AttackRange, rangeBonus) && IsSameDirection(enemyDirect.xz, Direction.xz) && (PlayerAction == StateType.Attack || haveSkill))
+            int totalDamage = 0;
+            foreach (var damageElement in playerSentDamages)
             {
-                if (characterData.HP > 0f)
-                    characterData.HP -= Damage + damageOnSkill;
-                else
+                var distance = math.distance(playerPosition, transform.Position);
+                var enemyDirect = math.normalize(playerPosition - transform.Position);
+                if (damageElement.Radius > 0f && distance < damageElement.Radius)
                 {
-                    characterData.HP = 0;
-                    state.Dead = true;
+                    totalDamage += damageElement.Damage;
+                }
+                else if (distance <= playerAttackRange && IsSameDirection(enemyDirect.xz, damageElement.Direct.xz))
+                {
+                    totalDamage += damageElement.Damage;
                 }
             }
+            enemyReceiveDamages.Add(new ReceiveDamageElementData() { Damage = totalDamage });
         }
+        ecb.Playback(EntityManager);
+        ecb.Dispose();
 
-        public bool IsSameDirection(float2 begin, float2 end)
-        {
-            return Vector2.Angle(begin, end) > 100f;
-        }
+        playerSentDamages.Clear();
+    }
+
+    public bool IsSameDirection(float2 begin, float2 end)
+    {
+        return Vector2.Angle(begin, end) > 130f;
     }
 }

@@ -25,7 +25,7 @@ public struct ReceiveDamageElementData : IBufferElementData
 
 public struct SentDamageElementData : IBufferElementData
 {
-    public float3 Raidus;
+    public float Radius;
     public int Damage;
     public float3 Direct;
 }

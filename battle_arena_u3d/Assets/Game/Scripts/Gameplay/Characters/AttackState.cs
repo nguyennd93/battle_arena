@@ -47,6 +47,7 @@ public struct AttackState : ICharacterState
             }
             aspect.SentDamageBuffers.Add(new SentDamageElementData()
             {
+                Radius = 0f,
                 Damage = aspect.CharacterData.ValueRO.Damage,
                 Direct = aspect.WorldTransform.ValueRO.Forward
             });

@@ -10,8 +10,10 @@ public class GameControllerAuthoring : MonoBehaviour
 
     void Awake()
     {
+#if !UNITY_EDITOR
         Config.EnemyPerTurn = PlayerPrefs.GetInt("KEY_AMOUNT", 10);
         Config.IntervalSpawn = PlayerPrefs.GetInt("KEY_INTERVAL", 1);
+#endif
     }
 
     class Baker : Baker<GameControllerAuthoring>

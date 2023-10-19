@@ -52,6 +52,8 @@ public partial class GameFlow : MonoBehaviour
         }, (newInterval) =>
         {
             Interval = newInterval;
+            var infoSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<GameInfoUpdateSystem>();
+            infoSystem.ForceUpdate();
         });
         settingUI.OnClosed = () => Time.timeScale = 1;
         settingUI.OnReset = () =>

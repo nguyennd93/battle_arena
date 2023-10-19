@@ -48,7 +48,7 @@ public struct MoveState : ICharacterState
 
             aspect.SentDamageBuffers.Add(new SentDamageElementData()
             {
-                Raidus = context.GameConfig.SkillRadius,
+                Radius = context.GameConfig.SkillRadius,
                 Damage = 150,
                 Direct = float3.zero
             });

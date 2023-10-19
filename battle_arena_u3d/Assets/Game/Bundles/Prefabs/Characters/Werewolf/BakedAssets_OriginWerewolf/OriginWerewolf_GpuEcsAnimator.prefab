@@ -329,8 +329,8 @@ MonoBehaviour:
     Speed: 3
     Damage: 5
     Coin: 100
-    AttackRange: 2
-    AttackRate: 3
+    AttackRange: 2.5
+    AttackRate: 7
     SkillRate: 4
 --- !u!1 &8166547800937295809
 GameObject:

@@ -25,6 +25,7 @@ public partial class EnemyDestroySystem : SystemBase
             {
                 ecb.AddComponent<DisableTag>(entity);
                 transform.Position = new float3(3000, -500, 3000);
+                ecb.DestroyEntity(entity);
             }).ScheduleParallel();
     }
 }

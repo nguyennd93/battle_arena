@@ -31,6 +31,8 @@ public class SettingUI : UIController
         _sliderInterval.maxValue = 100;
         _sliderInterval.minValue = 1;
 
+        _sliderInterval.value = interval;
+        _sliderCount.value = enemyPerTurn;
         OnSpawnChanged();
         OnIntervalChanged();
     }

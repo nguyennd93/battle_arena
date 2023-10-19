@@ -382,7 +382,7 @@ MonoBehaviour:
     Damage: 5
     Coin: 500
     AttackRange: 10
-    AttackRate: 4
+    AttackRate: 8
     SkillRate: 5
 --- !u!114 &7225710950860128983
 MonoBehaviour:

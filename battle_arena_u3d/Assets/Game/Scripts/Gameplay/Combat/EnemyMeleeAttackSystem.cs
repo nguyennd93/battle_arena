@@ -26,6 +26,7 @@ public partial class EnemyMeleeAttackSystem : SystemBase
                 var playerDirect = math.normalize(transform.Position - playerPos);
                 if (math.distance(transform.Position, playerPos) <= data.AttackRange && IsSameDirection(enemyDamage.Direct.xz, playerDirect.xz))
                 {
+                    
                     playerReceiveDamages.Add(new ReceiveDamageElementData()
                     {
                         Damage = enemyDamage.Damage

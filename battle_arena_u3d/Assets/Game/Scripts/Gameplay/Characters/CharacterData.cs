@@ -16,7 +16,7 @@ public enum CharacterType
 public struct PlayerTag : IComponentData { }
 public struct DeadTag : IComponentData { }
 
-public struct DisableTag : ICleanupComponentData
+public struct DisableTag : IComponentData
 {
 
 }

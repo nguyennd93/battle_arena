@@ -53,7 +53,7 @@ public partial struct EnemySpawnerSystem : ISystem
                     float r = spawnUpdate.Random.NextFloat(gameConfig.EnemyRadiusSpawn * 0.7f, gameConfig.EnemyRadiusSpawn);
                     Vector3 randomPos = Quaternion.Euler(0, spawnUpdate.Random.NextFloat(0f, 360f), 0) * Vector3.forward * r;
 
-                    CharacterType type = spawnUpdate.Random.NextBool() ? CharacterType.EnemyMelee : CharacterType.EnemyMelee;
+                    CharacterType type = spawnUpdate.Random.NextBool() ? CharacterType.EnemyMelee : CharacterType.EnemyRange;
                     var entity = CreateEnemy(type, ref spawnUpdate, in gameResource, sortKey, randomPos);
                     if (type == CharacterType.EnemyMelee)
                         gameInfo.MeleeSpawn++;

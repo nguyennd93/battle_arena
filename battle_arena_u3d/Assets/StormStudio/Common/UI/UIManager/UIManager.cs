@@ -331,7 +331,7 @@ namespace StormStudio.Common.UI
 
         protected virtual void Awake()
         {
-            DontDestroyOnLoad(gameObject);
+            // DontDestroyOnLoad(gameObject);
             Instance = this;
 
             VisibleUIs = new List<UIVisibleData>();

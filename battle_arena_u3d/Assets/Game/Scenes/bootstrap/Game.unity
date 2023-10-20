@@ -346,15 +346,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config:
-    EnemyPerTurn: 1000
-    IntervalSpawn: 10
+    EnemyPerTurn: 50
+    IntervalSpawn: 2
     EnemyRadiusSpawn: 50
     ProjectileSpeed: 8
     ProjectileLifetime: 3.5
     SkillLifetime: 3.5
     IntervalSkill: 8
     AttackLifetime: 1
-    SkillRadius: 8
+    SkillRadius: 15
   Resource:
     PrefabEnemyMelee: {fileID: 4461775674249964447, guid: beaadca4984c84e239a887211a772f89, type: 3}
     PrefabEnemyRange: {fileID: 5985098503641769869, guid: afba756c369024c348c4399f0a16c02e, type: 3}
@@ -430,7 +430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6441130136610681821, guid: dd37feb04c01c4dcfa9314735f4f7192, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6441130136610681821, guid: dd37feb04c01c4dcfa9314735f4f7192, type: 3}
       propertyPath: m_LocalPosition.z

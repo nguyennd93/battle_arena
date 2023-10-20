@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [UpdateInGroup(typeof(LateSimulationSystemGroup))]
 public partial class GameInfoUpdateSystem : SystemBase
@@ -44,6 +45,6 @@ public partial class GameInfoUpdateSystem : SystemBase
 
     public void ForceReset()
     {
-
+        SceneManager.LoadScene("bootstrap", LoadSceneMode.Single);
     }
 }

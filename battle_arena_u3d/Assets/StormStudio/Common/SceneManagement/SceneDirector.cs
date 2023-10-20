@@ -119,7 +119,7 @@ namespace StormStudio.Common
             _overlayCamera.clearFlags = CameraClearFlags.Nothing;
             _overlayCamera.enabled = true;
 
-            DontDestroyOnLoad(gameObject);
+            // DontDestroyOnLoad(gameObject);
         }
     }
 

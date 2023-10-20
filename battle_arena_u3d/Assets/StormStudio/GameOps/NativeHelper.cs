@@ -94,21 +94,21 @@ namespace StormStudio.GameOps
         }
         public static string GetCountryCode()
         {
-#if UNITY_EDITOR
+// #if UNITY_EDITOR
             return "VN";
-#elif UNITY_IOS
-            return _getCountryCode();
-#elif UNITY_ANDROID
-            var countryCode = "US";
-            using (AndroidJavaClass cls = new AndroidJavaClass("java.util.Locale"))
-            {
-                using (AndroidJavaObject locale = cls.CallStatic<AndroidJavaObject>("getDefault"))
-                {
-                    countryCode = locale.Call<string>("getCountry");
-                }
-            }
-            return countryCode;
-#endif
+// #elif UNITY_IOS
+//             return _getCountryCode();
+// #elif UNITY_ANDROID
+//             var countryCode = "US";
+//             using (AndroidJavaClass cls = new AndroidJavaClass("java.util.Locale"))
+//             {
+//                 using (AndroidJavaObject locale = cls.CallStatic<AndroidJavaObject>("getDefault"))
+//                 {
+//                     countryCode = locale.Call<string>("getCountry");
+//                 }
+//             }
+//             return countryCode;
+// #endif
         }
 
         public static string GetCountry()

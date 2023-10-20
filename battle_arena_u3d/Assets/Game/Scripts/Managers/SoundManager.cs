@@ -292,7 +292,7 @@ public class SoundManager : MonoBehaviour
     void TestVibration()
     {
         Debug.Log("Play Vibrate");
-        Handheld.Vibrate();
+        // Handheld.Vibrate();
     }
 
     public void PlaySfxTapButton()
